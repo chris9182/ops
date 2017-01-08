@@ -49,8 +49,7 @@ class Ameisen {
     long cycles=0;
     std::vector<std::vector<Point2>*>* bestways = new std::vector<std::vector<Point2>*>;
     public:
-    Ameisen(unsigned int pointcount,Point** points,LogicType type)
-    {
+    Ameisen(unsigned int pointcount,Point** points,LogicType type){
         start=pointcount*100;
         weightchangesub=weightchangesubBase;//+weightchangesubConst; /(pointcount*pointcount-pointcount)
         weightchangeadd=weightchangeaddBase*pointcount;
@@ -101,6 +100,7 @@ class Ameisen {
         instanciatedistance();
 
     }
+
     double calcdistance(Point* p1,Point* p2){
         double calc=0;
         for(unsigned short i=0;i<dimension;i++){
@@ -108,6 +108,7 @@ class Ameisen {
         }
         return pow(calc,0.5);
     }
+
     void instanciatedistance(){
         //TODO Parallel
         for(unsigned int i=0;i<pointcount;i++){
@@ -119,6 +120,7 @@ class Ameisen {
             }
         }
     }
+
     std::ostream& print(std::ostream& o){
         o<<"{";
         for (unsigned int i=0;i<pointcount;i++) {
@@ -139,15 +141,6 @@ class Ameisen {
         }
         o<<std::endl<<"}";
         return o;
-    }
-
-    void pushSolution(std::vector<Point2>* solution){
-        bestways->insert(bestways->begin(),solution);
-        if(solutionCount>=maxSolutionCount){
-            delete ((*bestways)[maxSolutionCount-1]);
-            bestways->erase(bestways->begin()+ maxSolutionCount-1);
-        }
-        else{solutionCount++;}
     }
 
     std::ostream& printscore(std::ostream& o){
@@ -211,6 +204,20 @@ class Ameisen {
                 break;
         }
 
+    }
+
+    ~Ameisen(){
+
+        for(unsigned int i=0;i<pointcount;i++){
+            delete[] probability[i];
+        }
+        delete[] probability;
+        for(unsigned int i=0;i<pointcount;i++){
+            delete[] distance[i];
+        }
+        delete[] distance;
+        //TODO delete vectordings
+        //delete bestway;
     }
 
 private:
@@ -461,7 +468,6 @@ private:
 
     }
 
-
     void calcPath(){
 
         std::vector<Point2>* pin= new std::vector<Point2>();
@@ -601,24 +607,14 @@ private:
 
     }
 
-
-public:
-    ~Ameisen(){
-
-        for(unsigned int i=0;i<pointcount;i++){
-            delete[] probability[i];
+    void pushSolution(std::vector<Point2>* solution){
+        bestways->insert(bestways->begin(),solution);
+        if(solutionCount>=maxSolutionCount){
+            delete ((*bestways)[maxSolutionCount-1]);
+            bestways->erase(bestways->begin()+ maxSolutionCount-1);
         }
-        delete[] probability;
-        for(unsigned int i=0;i<pointcount;i++){
-            delete[] distance[i];
-        }
-        delete[] distance;
-        //TODO delete vectordings
-        //delete bestway;
+        else{solutionCount++;}
     }
-
-
-
 };
 
 
